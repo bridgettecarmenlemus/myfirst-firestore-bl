@@ -8,8 +8,44 @@ initializeApp({
 
 const db = getFirestore();
 
+db.collection("cars")
+    .add({ make: "Ferari", model: "GTO", year: 2008, color: "red" })
+    .then(doc => {
+        console.log('Doc added:', doc.id)
+    })
+    .catch(err => console.error(err))
 
 
-const car = { make: "Audi", model: "A3", year: 2018, color: "grey" };
+db.collection ("cars").doc("lambo")
+    .set({ make: "Lamborghini", model: "Diablo", year: 2020, color: "yellow"})
 
-db.collection("cars").add(car);
+db.collection("cars").doc("lambo")
+    .update({ model: "Diablo", color: "Hot Pink" })
+
+db.collection("cars").doc("lambo").get()
+    .then(doc => {
+        console.log(doc.id)
+        console.log(doc.data())
+    })
+    .catch(console.error)
+
+// get a whole collection
+db.collection("cars").get()
+    .then(collection => {
+        collection.docs.forEach(doc => console.log(doc.id, doc.data()))
+    })
+    .catch(console.error)
+
+// query docs from collection:
+db.collection("cars")
+    .where("year", ">=", 2015)
+    .get()
+        .then(collection => {
+      const cars = collection.docs.map(doc => {
+        let car = doc.data() //{ make,model, color, year}
+        car.id = doc.id // { make. model color, yera, id }
+        return car 
+    })
+      (console.log(cars))
+    })
+    .catch(console.error)
